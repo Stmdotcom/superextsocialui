@@ -1,0 +1,184 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\FrameXML\UI.xsd">
+    <Script file="Config.lua"/>
+
+    <CheckButton name="ExtSocialUI_CheckBoxTemplate" inherits="UICheckButtonTemplate" virtual="true">
+        <HitRectInsets>
+            <AbsInset bottom="0" left="0" right="-100" top="0"/>
+        </HitRectInsets>
+        <Scripts>
+            <OnClick>
+                ExtSocialUIConfig_CheckBox_OnClick(self, self:GetID());
+                if (self:GetChecked()) then
+                    <!--PlaySound("igMainMenuOptionCheckBoxOff");-->
+                else
+                    <!--PlaySound("igMainMenuOptionCheckBoxOn");-->
+                end
+            </OnClick>
+            <OnEnter>
+                ExtSocialUIConfig_Option_OnEnter(self);
+            </OnEnter>
+            <OnLeave>
+                ExtSocialUIConfig_Option_OnLeave(self);
+            </OnLeave>
+        </Scripts>
+    </CheckButton>
+
+    <Slider name="ExtSocialUI_SliderTemplate" inherits="OptionsSliderTemplate" virtual="true">
+        <Size>
+            <AbsDimension x="340" y="20"/>
+        </Size>
+        <Layers>
+            <Layer level="BACKGROUND">
+                <FontString name="$parentText1" inherits="GameFontNormalSmall">
+                    <Color r="1.0" g="1.0" b="1.0"/>
+                    <Anchors>
+                        <Anchor point="BOTTOM" relativePoint="TOP">
+                            <Offset>
+                                <AbsDimension x="0" y="2"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </FontString>
+                <FontString name="$parentText2" inherits="GameFontNormalSmall">
+                    <Anchors>
+                        <Anchor point="CENTER">
+                            <Offset>
+                                <AbsDimension x="0" y="-15"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+        <Scripts>
+            <OnEnter>
+                ExtSocialUI_Option_OnEnter(self);
+            </OnEnter>
+            <OnLeave>
+                ExtSocialUI_Option_OnLeave(self);
+            </OnLeave>
+        </Scripts>
+    </Slider>
+
+    <Frame name="ExtSocialUI_ContainerTemplate" virtual="true">
+        <Size>
+            <AbsDimension x="100" y="20"/>
+        </Size>
+        <Layers>
+            <Layer level="ARTWORK">
+                <FontString name="$parentTitle" inherits="GameFontNormal">
+                    <Anchors>
+                        <Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT">
+                            <Offset x="10" y="0"/>
+                        </Anchor>
+                    </Anchors>
+                </FontString>
+            </Layer>
+        </Layers>
+        <Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+            <BorderColor r="0.5" g="0.5" b="0.5"/>
+            <Color r="0.25" g="0.25" b="0.25" a="0.5"/>
+            <BackgroundInsets>
+                <AbsInset left="3" right="3" top="3" bottom="3"/>
+            </BackgroundInsets>
+            <TileSize>
+                <AbsValue val="16"/>
+            </TileSize>
+            <EdgeSize>
+                <AbsValue val="16"/>
+            </EdgeSize>
+        </Backdrop>
+    </Frame>
+
+    <Frame name="ExtSocialUIConfigContainer">
+        <Layers>
+            <Layer level="BACKGROUND">
+                <Texture name="$parentBackground">
+                    <Size>
+                        <AbsDimension x="1" y="1"/>
+                    </Size>
+                    <Anchors>
+                        <Anchor point="TOPLEFT">
+                            <Offset>
+                                <AbsDimension x="5" y="-5"/>
+                            </Offset>
+                        </Anchor>
+                        <Anchor point="BOTTOMRIGHT">
+                            <Offset>
+                                <AbsDimension x="-5" y="5"/>
+                            </Offset>
+                        </Anchor>
+                    </Anchors>
+                    <Color r="0" g="0" b="0" a="0.75"/>
+                </Texture>
+            </Layer>
+        </Layers>
+        <Frames>
+            <ScrollFrame name="$parentScroll" inherits="UIPanelScrollFrameTemplate">
+                <Anchors>
+                    <Anchor point="TOPLEFT">
+                        <Offset>
+                            <AbsDimension x="5" y="-5"/>
+                        </Offset>
+                    </Anchor>
+                    <Anchor point="BOTTOMRIGHT">
+                        <Offset>
+                            <AbsDimension x="-28" y="5"/>
+                        </Offset>
+                    </Anchor>
+                </Anchors>
+                <ScrollChild>
+                    <Frame name="ExtSocialUIConfig">
+                        <Size>
+                            <AbsDimension x="600" y="300"/>
+                        </Size>
+                        <Layers>
+                            <Layer level="ARTWORK">
+                                <FontString name="$parentTitle" inherits="GameFontNormalLarge">
+                                    <Anchors>
+                                        <Anchor point="TOPLEFT">
+                                            <Offset>
+                                                <AbsDimension x="20" y="-20"/>
+                                            </Offset>
+                                        </Anchor>
+                                    </Anchors>
+                                </FontString>
+                            </Layer>
+                        </Layers>
+                        <Frames>
+                            <Frame name="$parent_GeneralContainer" inherits="ExtSocialUI_ContainerTemplate">
+                                <Anchors>
+                                    <Anchor point="TOPLEFT">
+                                        <Offset x="20" y="-70"/>
+                                    </Anchor>
+                                    <Anchor point="BOTTOMRIGHT" relativePoint="TOPRIGHT">
+                                        <Offset x="-20" y="-120"/>
+                                    </Anchor>
+                                </Anchors>
+                                <Frames>
+                                    <CheckButton id="1" name="$parent_ShowLoadMsg" inherits="ExtSocialUI_CheckBoxTemplate">
+                                        <Anchors>
+                                            <Anchor point="TOPLEFT">
+                                                <Offset>
+                                                    <AbsDimension x="10" y="-10"/>
+                                                </Offset>
+                                            </Anchor>
+                                        </Anchors>
+                                    </CheckButton>
+                                </Frames>
+                            </Frame>
+
+                        </Frames>
+                    </Frame>
+                </ScrollChild>
+            </ScrollFrame>
+        </Frames>
+        <Scripts>
+            <OnLoad>
+                ExtSocialUIConfig_OnLoad(self);
+            </OnLoad>
+        </Scripts>
+    </Frame>
+
+</Ui>
