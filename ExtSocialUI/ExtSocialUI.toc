@@ -1,7 +1,7 @@
 ## Interface: 70300
 ## Title: Extended Social UI |cffffffffv1.2.0
 ## Notes: Extends the Social window to reduce clutter.
-## Author: Germbread (Mod: Stm)
+## Author: Germbread, Stmdotcom
 ## Version: 1.2.0
 ## SavedVariables: EXTSOCIALUI_DATA
 ## OptionalDeps: XRP, totalRP3
