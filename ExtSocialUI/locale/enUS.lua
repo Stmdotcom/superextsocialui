@@ -19,6 +19,6 @@ L["LABEL_AUTHOR"] = "Author";
 L["LABEL_EMAIL"] = "Email";
 L["LABEL_HOSTS"] = "Download Site(s)";
 
-L["COPYRIGHT"] = "©2012, All rights reserved.";
+L["COPYRIGHT"] = "ï¿½2012, All rights reserved.";
 
 end

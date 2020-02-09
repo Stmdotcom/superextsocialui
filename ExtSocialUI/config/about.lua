@@ -1,11 +1,11 @@
 local L = LibStub("AceLocale-3.0"):GetLocale("ExtSocialUI", true);
 
 local ABOUT = {
-    author = "Alex Ellison (Germbread - Deathwing-US)",
+    author = "Germbread (Deathwing-US)",
     email = GetAddOnMetadata("ExtSocialUI", "X-Email"),
     hosts = {
-        "http://www.wowinterface.com/",
-        "http://www.curse.com/",
+        "https://www.curseforge.com/wow/addons",
+        "https://www.curseforge.com/wow/addons/extended-social-ui",
     },
 };
 
