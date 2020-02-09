@@ -277,7 +277,9 @@ function ExtSocialUI_RebuildFrame()
     WhoFrameEditBox:SetWidth(560);
 
     -- then hook the who list update function
+   
     WhoListScrollFrame.update = ExtSocialUI_WhoList_Update;
+    WhoList_Update = ExtSocialUI_WhoList_Update;
 
     -- ********** Raid Tab **********
 
@@ -594,6 +596,7 @@ function ExtSocialUI_WhoList_Update()
 	local whoOffset = FauxScrollFrame_GetOffset(WhoListScrollFrame);
     local whoIndex;
     local showScrollBar = nil;
+    local usedHeight = 0;
 
 	if (numWhosFiltered > WHOS_TO_DISPLAY) then
 		showScrollBar = 1;
@@ -687,6 +690,7 @@ function ExtSocialUI_WhoList_Update()
             button:Hide();
         else
             button:Show();
+            usedHeight = usedHeight + FRIENDS_FRAME_WHO_HEIGHT;
         end
 	end
 
@@ -697,10 +701,10 @@ function ExtSocialUI_WhoList_Update()
 		WhoFrameGroupInviteButton:Enable();
 		WhoFrameAddFriendButton:Enable();
 		WhoFrame.selectedName = C_FriendList.GetWhoInfo(WhoFrame.selectedWho); 
-	end
-
+    end
+    
     -- ScrollFrame update
-	--HybridScrollFrame_Update(WhoListScrollFrame, numWhos * FRIENDS_FRAME_WHO_HEIGHT, usedHeight);
+	HybridScrollFrame_Update(WhoListScrollFrame, numWhos * FRIENDS_FRAME_WHO_HEIGHT, usedHeight);
 
 
 	PanelTemplates_SetTab(FriendsFrame, 2);
@@ -810,7 +814,7 @@ function ExtSocialUI_FriendsFrameWhoButton_OnClick(self, button)
     if (button == "LeftButton") then
         WhoFrame.selectedWho = clickedButton.whoIndex;
         WhoFrame.selectedName = clickedButton.Name:GetText();
-        WhoList_Update();
+        ExtSocialUI_WhoList_Update();
     else
         local name = clickedButton.Name:GetText();
         FriendsFrame_ShowDropdown(name, 1);
