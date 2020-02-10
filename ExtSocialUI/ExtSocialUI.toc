@@ -12,6 +12,4 @@ lib\AceLocale-3.0.lua
 locale\enUS.lua
 
 ExtSocialUI.xml
-config\Config.xml
-config\about.xml
 extend\menus.lua
