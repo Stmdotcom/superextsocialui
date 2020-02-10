@@ -6,6 +6,7 @@ local EXT_LOADED = false;
 local BLIZZ_RAID_LOADED = false;
 local RAID_REBUILT = false;
 local QJR_QUEUE = 0;
+local WHOS_FILTER_GENDER = -1;
 
 local HOOKS = {};
 
@@ -19,7 +20,6 @@ local NEW_FRIEND_BUTTON_HEIGHT = 45;
 -- Initial load routine
 --========================================
 function ExtSocialUI_OnLoad(self)
-
     self:RegisterEvent("ADDON_LOADED");
     self:RegisterEvent("SOCIAL_QUEUE_UPDATE");
     self:RegisterEvent("LFG_LIST_SEARCH_RESULT_UPDATED");
@@ -27,10 +27,6 @@ function ExtSocialUI_OnLoad(self)
     self:RegisterEvent("GROUP_LEFT");
     self:RegisterEvent("PVP_BRAWL_INFO_UPDATED");
     self:RegisterEvent("GUILD_ROSTER_UPDATE");
-
-    SLASH_EXTSOCIALUI1 = "/esui";
-    SlashCmdList["EXTSOCIALUI"] = ExtSocialUI_CommandHandler;
-
 end
 
 --========================================
@@ -49,7 +45,7 @@ end
 -- Event handler
 --========================================
 function ExtSocialUI_OnEvent(self, event, ...)
-    
+
     if (event == "ADDON_LOADED") then
         local arg1 = ...;
         if (arg1 == "ExtSocialUI") then
@@ -91,17 +87,8 @@ function ExtSocialUI_Setup()
 
     HOOKS["FriendsFrameWhoButton_OnClick"] = FriendsFrameWhoButton_OnClick;
     FriendsFrameWhoButton_OnClick = ExtSocialUI_FriendsFrameWhoButton_OnClick;
-    
+
     ExtSocialUI_RebuildFrame();
-
-    if (EXTSOCIALUI_DATA['config']['show_load_message']) then
-        ExtSocialUI_Message(string.format(L["LOADED_MESSAGE"], EXTSOCIALUI_VERSION));
-    end
-
-    hooksecurefunc("CreateFrame", ExtSocialUI_CreateFrame);
-
-    WHOS_FILTER_GENDER = -1
-
 end
 
 --========================================
@@ -164,14 +151,14 @@ function ExtSocialUI_RebuildFrame()
             local nameText = _G[name .. "Name"];
             nameText:SetWidth(500);
             local infoText = _G[name .. "Info"];
-            infoText:SetWidth(500);
+            infoText:SetWidth(125);
             local noteIcon = btn:CreateTexture(name .. "NoteIcon", "ARTWORK");
             noteIcon:SetWidth(14);
             noteIcon:SetHeight(12);
-            noteIcon:SetPoint("TOPLEFT", infoText, "BOTTOMLEFT", 0, -2);
+            noteIcon:SetPoint("LEFT", infoText, "RIGHT", 0, 0);
             noteIcon:SetTexture("Interface/FriendsFrame/UI-FriendsFrame-Note");
             local noteText = btn:CreateFontString(name .. "Note", "ARTWORK", "FriendsFont_Small");
-            noteText:SetPoint("LEFT", noteIcon, "RIGHT", 1, 0);
+            noteText:SetPoint("LEFT", noteIcon, "RIGHT", 0, 0);
             noteText:SetWidth(484);
             noteText:SetJustifyH("LEFT");
             local charInfoText = btn:CreateFontString(name .. "CharInfo", "ARTWORK", "FriendsFont_Small");
@@ -277,7 +264,7 @@ function ExtSocialUI_RebuildFrame()
     WhoFrameEditBox:SetWidth(560);
 
     -- then hook the who list update function
-   
+
     WhoListScrollFrame.update = ExtSocialUI_WhoList_Update;
     WhoList_Update = ExtSocialUI_WhoList_Update;
 
@@ -286,7 +273,7 @@ function ExtSocialUI_RebuildFrame()
     RaidFrameRaidDescription:SetWidth(566);
 
     -- ********** Quick Join **********
-        
+
     QuickJoinScrollFrame:SetWidth(564);
     for i = 1, #QuickJoinScrollFrame.buttons, 1 do
         local button = QuickJoinScrollFrame.buttons[i];
@@ -341,7 +328,7 @@ function NewWhoSearchDropDown_Menu(frame, level, menuList)
 
         info.text, info.hasArrow, info.menuList = "Zone", true, "Zones"
         UIDropDownMenu_AddButton(info)
-        
+
         info.text, info.hasArrow, info.menuList = "Race", true, "Races"
         UIDropDownMenu_AddButton(info)
 
@@ -383,13 +370,13 @@ function SetWhoGender(newValue)
 end
 
 function SetWhoZone(newValue)
-    local _beforetext = WhoFrameEditBox:GetText() 
-    WhoFrameEditBox:Insert(" z-" .. '"' .. newValue.value .. '"')   
+    local _beforetext = WhoFrameEditBox:GetText()
+    WhoFrameEditBox:Insert(" z-" .. '"' .. newValue.value .. '"')
 end
 
 function SetWhoRace(newValue)
-    local _beforetext = WhoFrameEditBox:GetText() 
-    WhoFrameEditBox:Insert(" r-" .. '"' .. newValue.value .. '"')   
+    local _beforetext = WhoFrameEditBox:GetText()
+    WhoFrameEditBox:Insert(" r-" .. '"' .. newValue.value .. '"')
 end
 
 --========================================
@@ -435,7 +422,7 @@ end
 -- Rebuild the Raid tab
 --========================================
 function ExtSocialUI_RebuildRaidUI()
-
+    print("Raid!")
     local i, j;
 
     for i = 1, 8, 1 do
@@ -482,67 +469,6 @@ function ExtSocialUI_HideUnnamedTextures(parent)
     end
 end
 
---========================================
--- Toggles a boolean config setting
---========================================
-function ExtSocialUI_ToggleSetting(name)
-    if (EXTSOCIALUI_DATA['config'][name]) then
-        EXTSOCIALUI_DATA['config'][name] = false;
-    else
-        EXTSOCIALUI_DATA['config'][name] = true;
-    end
-end
-
---========================================
--- Output message to chat frame
---========================================
-function ExtSocialUI_Message(msg)
-    DEFAULT_CHAT_FRAME:AddMessage("|cffe000ff<" .. L["ADDON_TITLE"] .. ">|r " .. msg);
-end
-
---========================================
--- Slash command handler
---========================================
-function ExtSocialUI_CommandHandler(cmd)
-    InterfaceOptionsFrame_OpenToCategory(ExtSocialUIConfigContainer);
-end
-
-function GetNumWhoResultsFiltered()
-    local result, filteredCount;
-    filteredCount = 0;
-    local numWhos, totalCount = GetNumWhoResults();
-
-    for i = 1, totalCount, 1 do
-        result = GetWhoInfoFiltered(i, true)
-        if result then
-            filteredCount = filteredCount + 1
-        end
-    end
-
-    return filteredCount, totalCount;
-end
-
-function GetWhoInfoFiltered(whoIndex, boolmode)
-    local who = C_FriendList.GetWhoInfo(whoIndex);
-    local name = who.fullName;
-
-    if (WHOS_FILTER_GENDER == "Male" and who.gender ~= 2) then
-        name = false
-    elseif (WHOS_FILTER_GENDER == "Female" and who.gender ~= 3) then
-        name = false
-    end
-
-    if boolmode then
-        if name then
-            return true
-        else
-            return false
-        end
-    else
-        return name, who.fullGuildName, who.level, who.raceStr, who.classStr, who.area, who.filename, who.gender
-    end
-end
-
 function GetWhoInfoFilteredAll()
     local whoList = {};
     local filteredCount = 0;
@@ -550,23 +476,24 @@ function GetWhoInfoFilteredAll()
     for i = 1, MAX_WHOS_FROM_SERVER, 1 do
         local who = C_FriendList.GetWhoInfo(i);
         if who ~= nil then
-            local name = who.fullName;
+            local showChar = false;
 
             -- Add more filters here
-            if (WHOS_FILTER_GENDER == "Male" and sex ~= 2) then
-                name = false
-            elseif (WHOS_FILTER_GENDER == "Female" and sex ~= 3) then
-                name = false
+            if (WHOS_FILTER_GENDER == -1) then
+                showChar = true
+            elseif (WHOS_FILTER_GENDER == "Male" and who.gender == 2) then
+                showChar = true
+            elseif (WHOS_FILTER_GENDER == "Female" and who.gender == 3) then
+                showChar = true
             end
 
-            if name then
+            if showChar then
                 filteredCount = filteredCount + 1;
-                table.insert (whoList, {name, who.fullGuildName, who.level, who.raceStr, who.classStr, who.area, who.filename, who.gender} )
+                table.insert (whoList, { who.fullName, who.fullGuildName, who.level, who.raceStr, who.classStr, who.area, who.filename, who.gender})
             end
         end
     end
     return whoList, filteredCount
-    
 end
 
 function dump(o)
@@ -617,11 +544,11 @@ function ExtSocialUI_WhoList_Update()
     --local realpos = 1
 
     for i = 1, WHOS_TO_DISPLAY, 1 do
-        
+
          local btn = _G["WhoListScrollFrameButton" .. i];
          if (btn) then
              btn:Hide();
-         end    
+         end
 
 
 		whoIndex = whoOffset + i;
@@ -677,7 +604,7 @@ function ExtSocialUI_WhoList_Update()
                 button.RP:SetText("-")
             end
             button.Sex:SetText(genderTable[sex])
-            
+
             -- Highlight the correct who
             if ( WhoFrame.selectedWho == whoIndex ) then
                 button:LockHighlight();
@@ -700,9 +627,9 @@ function ExtSocialUI_WhoList_Update()
 	else
 		WhoFrameGroupInviteButton:Enable();
 		WhoFrameAddFriendButton:Enable();
-		WhoFrame.selectedName = C_FriendList.GetWhoInfo(WhoFrame.selectedWho); 
+		WhoFrame.selectedName = C_FriendList.GetWhoInfo(WhoFrame.selectedWho);
     end
-    
+
     -- ScrollFrame update
 	HybridScrollFrame_Update(WhoListScrollFrame, numWhos * FRIENDS_FRAME_WHO_HEIGHT, usedHeight);
 
@@ -771,7 +698,7 @@ function ExtSocialUI_FriendsFrame_UpdateFriends()
                         gameAccountInfo = accountInfo.gameAccountInfo;
                         note = accountInfo.note;
                         isOnline = gameAccountInfo.isOnline;
-                 
+
                         if (gameAccountInfo.gameAccountID and gameAccountInfo.isOnline) then
                             if (gameAccountInfo.clientProgram == BNET_CLIENT_WOW) then
                                 local color = "";
@@ -795,7 +722,7 @@ function ExtSocialUI_FriendsFrame_UpdateFriends()
                     noteString:SetText(note);
                     noteString:Show();
                     noteIcon:Show();
-                    btn:SetHeight(NEW_FRIEND_BUTTON_HEIGHT + 5);
+                    -- btn:SetHeight(NEW_FRIEND_BUTTON_HEIGHT + 5);
                 else
                     noteString:Hide();
                     noteIcon:Hide();
@@ -818,33 +745,6 @@ function ExtSocialUI_FriendsFrameWhoButton_OnClick(self, button)
     else
         local name = clickedButton.Name:GetText();
         FriendsFrame_ShowDropdown(name, 1);
-    end
-end
-
-function ExtSocialUI_CreateFrame(frameType, name, parent, template)
-    if template == "FriendsFrameButtonTemplate" then
-        local btn = _G[name];
-        btn:SetWidth(562);
-        btn:SetHeight(NEW_FRIEND_BUTTON_HEIGHT);
-        local nameText = _G[name .. "Name"];
-        nameText:SetWidth(500);
-        local infoText = _G[name .. "Info"];
-        infoText:SetWidth(500);
-        local noteIcon = btn:CreateTexture(name .. "NoteIcon", "ARTWORK");
-        noteIcon:SetWidth(14);
-        noteIcon:SetHeight(12);
-        noteIcon:SetPoint("TOPLEFT", infoText, "BOTTOMLEFT", 0, -2);
-        noteIcon:SetTexture("Interface/FriendsFrame/UI-FriendsFrame-Note");
-        local noteText = btn:CreateFontString(name .. "Note", "ARTWORK", "FriendsFont_Small");
-        noteText:SetPoint("LEFT", noteIcon, "RIGHT", 1, 0);
-        noteText:SetWidth(484);
-        noteText:SetJustifyH("LEFT");
-        local charInfoText = btn:CreateFontString(name .. "CharInfo", "ARTWORK", "FriendsFont_Small");
-        charInfoText:SetPoint("RIGHT", name .. "GameIcon", "LEFT", -5, -2);
-        charInfoText:SetWidth(200);
-        charInfoText:SetJustifyH("RIGHT");
-        charInfoText:SetText(name .. "CharInfo");
-        charInfoText:SetTextColor(0.5, 0.5, 0.5);
     end
 end
 
