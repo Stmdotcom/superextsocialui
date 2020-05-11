@@ -705,7 +705,23 @@ function ExtSocialUI_FriendsFrame_UpdateFriends()
                                 if (gameAccountInfo.factionName ~= UnitFactionGroup("player")) then
                                     color = "|cffff6060";
                                 end
-                                charInfo = color .. string.format(L["FRIEND_INFO_TEMPLATE_WOW"], gameAccountInfo.characterLevel, gameAccountInfo.raceName, gameAccountInfo.className) .. "\n" .. gameAccountInfo.realmName;
+
+                                local realmName = '';
+                                if gameAccountInfo.realmDisplayName then
+                                    realmName = gameAccountInfo.realmDisplayName;
+                                end
+
+                                local raceName = '';
+                                if gameAccountInfo.raceName then
+                                    raceName = gameAccountInfo.raceName;
+                                end
+
+                                local className = '';
+                                if gameAccountInfo.className then
+                                    className = gameAccountInfo.className
+                                end
+
+                                charInfo = color .. string.format(L["FRIEND_INFO_TEMPLATE_WOW"], gameAccountInfo.characterLevel, raceName, className) .. "\n" .. realmName;
                             end
                         end
                     end
