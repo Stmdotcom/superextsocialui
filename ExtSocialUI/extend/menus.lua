@@ -38,23 +38,21 @@ end
 local function UnitPopup_OnClick_Hook(self)
 	if not standard and not units then return end
 
-
 	if self.value == "EXTSOC_RP_VIEW_CHARACTER" then
 		the_server = UIDROPDOWNMENU_INIT_MENU.server or player_realm
 
 		Open_TRP3_Frame(UIDROPDOWNMENU_INIT_MENU.name, the_server)
 	elseif self.value == "EXTSOC_RP_VIEW_BN" then
-		local active, characterName, client, realmName = BNGetGameAccountInfo(select(6, BNGetFriendInfoByID(UIDROPDOWNMENU_INIT_MENU.bnetIDAccount)))
-		if client == BNET_CLIENT_WOW and realmName ~= "" then
-			Open_TRP3_Frame(characterName, realmName)
+		local gameAccountInfo = UIDROPDOWNMENU_INIT_MENU.accountInfo.gameAccountInfo
+		if gameAccountInfo.clientProgram == BNET_CLIENT_WOW and gameAccountInfo.realmName ~= "" then
+			Open_TRP3_Frame(gameAccountInfo.characterName, gameAccountInfo.realmName)
 		end
 	elseif self.value == "EXTSOC_COPY_NAME" then
-		TRP3_API.Ellyb.Popups:OpenURL(UIDROPDOWNMENU_INIT_MENU.name, "COPY NAME");
+		TRP3_API.Ellyb.Popups:OpenURL(UIDROPDOWNMENU_INIT_MENU.accountInfo.gameAccountInfo.characterName, "COPY NAME");
 	end
 end
 
-local function Open_TRP3_Frame(name, server)
-
+function Open_TRP3_Frame(name, server)
 	the_unit = name .. "-" .. server
 	the_unit = the_unit:gsub("%s+", "")
 
@@ -82,8 +80,8 @@ local function UnitPopup_HideButtons_Hook()
 			if not UIDROPDOWNMENU_INIT_MENU.bnetIDAccount then
 				UnitPopupShown[UIDROPDOWNMENU_MENU_LEVEL][i] = 0
 			else
-				local active, characterName, client, realmName = BNGetGameAccountInfo(select(6, BNGetFriendInfoByID(UIDROPDOWNMENU_INIT_MENU.bnetIDAccount)))
-				if client ~= BNET_CLIENT_WOW or realmName == "" then
+				--table.foreach(UIDROPDOWNMENU_INIT_MENU, print)
+				if UIDROPDOWNMENU_INIT_MENU.accountInfo.gameAccountInfo.clientProgram ~= BNET_CLIENT_WOW or UIDROPDOWNMENU_INIT_MENU.accountInfo.gameAccountInfo.realmName == "" then
 					UnitPopupShown[UIDROPDOWNMENU_MENU_LEVEL][i] = 0
 				else
 					UnitPopupShown[UIDROPDOWNMENU_MENU_LEVEL][i] = 1

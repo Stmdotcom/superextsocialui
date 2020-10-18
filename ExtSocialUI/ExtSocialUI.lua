@@ -690,9 +690,9 @@ function ExtSocialUI_FriendsFrame_UpdateFriends()
                 local isOnline = false;
                 if (btn:IsVisible()) then
                     if (btn.buttonType == FRIENDS_BUTTON_TYPE_WOW) then
-                        local name, level, class, area, connected, status, noteText = GetFriendInfo(btn.id);
-                        note = noteText;
-                        isOnline = connected;
+                        local friendInfo = C_FriendList.GetFriendInfoByIndex(btn.id);
+                        note = friendInfo.notes;
+                        isOnline = friendInfo.conneted;
                     elseif (btn.buttonType == FRIENDS_BUTTON_TYPE_BNET) then
                         local accountInfo = C_BattleNet.GetFriendAccountInfo(btn.id);
                         gameAccountInfo = accountInfo.gameAccountInfo;
